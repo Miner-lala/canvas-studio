@@ -1,0 +1,20 @@
+# 白名单：根目录下只上传源码和配置，其他一律不上传。
+# 这样本地的数据（data/：项目、生成的图片、任务记录、API Key）、
+# 放在根目录的图片素材、打包产物都不会被误传。新增需要上传的文件/文件夹时，在下面加一行 !/名字
+/*
+!/src/
+!/electron/
+!/scripts/
+!/README.md
+!/package.json
+!/package-lock.json
+!/next.config.ts
+!/postcss.config.mjs
+!/tsconfig.json
+!/.env.example
+!/.gitignore
+
+# 以防万一：任何位置的这些文件都不上传
+.DS_Store
+.env*.local
+*.tsbuildinfo

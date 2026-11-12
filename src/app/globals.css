@@ -1,0 +1,124 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-bg: #0e0e11;
+  --color-panel: #17171b;
+  --color-panel-2: #1f1f25;
+  --color-panel-3: #2a2a31;
+  --color-line: #2e2e36;
+  --color-line-strong: #43434d;
+  --color-fg: #ececf1;
+  --color-muted: #8d8d99;
+  --color-accent: #2dd4bf;
+  --color-accent-strong: #14b8a6;
+  --color-danger: #f87171;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  --font-mono: 'SF Mono', Menlo, monospace;
+}
+
+html,
+body {
+  height: 100%;
+  background: var(--color-bg);
+  color: var(--color-fg);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-line-strong) transparent;
+}
+
+/* 放在 base 层，才不会盖过 Tailwind 的字号等工具类 */
+@layer base {
+  select,
+  input,
+  textarea,
+  button {
+    font: inherit;
+    color: inherit;
+  }
+}
+
+/* ---------- React Flow 深色主题微调 ---------- */
+.react-flow {
+  --xy-background-color: var(--color-bg);
+  --xy-background-pattern-color: #3a3a44;
+  --xy-edge-stroke: #55555f;
+  --xy-edge-stroke-selected: var(--color-accent);
+  --xy-edge-stroke-width: 2;
+  --xy-connectionline-stroke: var(--color-accent);
+  --xy-connectionline-stroke-width: 2;
+  --xy-handle-background-color: var(--color-panel-2);
+  --xy-handle-border-color: var(--color-line-strong);
+  --xy-selection-background-color: rgba(45, 212, 191, 0.08);
+  --xy-selection-border: 1px solid rgba(45, 212, 191, 0.6);
+  --xy-minimap-background-color: var(--color-panel);
+  --xy-minimap-mask-background-color: rgba(14, 14, 17, 0.75);
+  --xy-minimap-node-background-color: var(--color-panel-3);
+  --xy-controls-button-background-color: var(--color-panel);
+  --xy-controls-button-background-color-hover: var(--color-panel-2);
+  --xy-controls-button-color: var(--color-fg);
+  --xy-controls-button-border-color: var(--color-line);
+}
+
+.react-flow__node {
+  /* 节点自己画外观，去掉默认样式 */
+  border-radius: 14px;
+}
+
+/* 节点上的工具栏和生成面板要盖住小地图、缩放按钮：
+   去掉 renderer 的层叠上下文，工具栏的 z-index 才能和面板比较 */
+.react-flow__renderer {
+  z-index: auto !important;
+}
+.react-flow__node-toolbar {
+  z-index: 20 !important;
+}
+
+.react-flow__handle.canvas-handle {
+  width: 14px;
+  height: 14px;
+  border-width: 2px;
+  opacity: 0;
+  transition: opacity 0.15s, transform 0.15s;
+}
+.react-flow__node:hover .react-flow__handle.canvas-handle,
+.react-flow__node.selected .react-flow__handle.canvas-handle,
+.react-flow__handle.canvas-handle.connectingfrom,
+.react-flow__handle.canvas-handle.connectingto,
+.react-flow.connecting .react-flow__handle.canvas-handle {
+  opacity: 1;
+}
+.react-flow__handle.canvas-handle:hover {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+.react-flow__edge.animated path {
+  stroke: var(--color-accent);
+}
+
+.react-flow__controls {
+  box-shadow: none;
+  border: 1px solid var(--color-line);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.react-flow__minimap {
+  border: 1px solid var(--color-line);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+@keyframes shimmer {
+  0% { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+.shimmer {
+  background: linear-gradient(90deg, #1b1b20 0%, #26262d 50%, #1b1b20 100%);
+  background-size: 800px 100%;
+  animation: shimmer 1.6s linear infinite;
+}
