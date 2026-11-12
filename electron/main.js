@@ -69,6 +69,12 @@ async function startServer() {
   })
   server.stdout?.pipe(log, { end: false })
   server.stderr?.pipe(log, { end: false })
+  // 服务请求打开某个项目（MCP 操作画布时用）：在窗口里打开它，不抢焦点
+  server.on('message', (msg) => {
+    if (msg?.type !== 'open-project' || !/^[A-Za-z0-9_-]{1,64}$/.test(msg.projectId ?? '')) return
+    const win = mainWindow ?? createWindow()
+    win.loadURL(`${baseUrl}/p/${msg.projectId}`)
+  })
   server.on('exit', (code) => {
     log.write(`---- 服务退出，code ${code} ----\n`)
     server = null
@@ -131,7 +137,8 @@ function createWindow() {
     title: '画布',
     backgroundColor: '#0e0e11',
     show: false,
-    webPreferences: { contextIsolation: true, sandbox: true, spellcheck: false },
+    // 窗口最小化或被挡住时也照常运行：生成结果、外部指令（MCP）都要及时处理
+    webPreferences: { contextIsolation: true, sandbox: true, spellcheck: false, backgroundThrottling: false },
   })
   if (state.maximized) win.maximize()
   win.once('ready-to-show', () => win.show())

@@ -40,6 +40,7 @@ import { Dropdown } from './Dropdown'
 import { imageFiles, uploadFiles } from './upload'
 import { isValidConnection } from './graph'
 import { useAutosave, useTaskPoller } from './hooks'
+import { useRemoteControl } from './remote'
 import FrameNode from './nodes/FrameNode'
 import ImageNode from './nodes/ImageNode'
 import TextNode from './nodes/TextNode'
@@ -274,6 +275,7 @@ function Editor() {
 
   useAutosave()
   useTaskPoller()
+  useRemoteControl()
 
   // ---------- 拖入图片文件 / 粘贴图片 ----------
   const lastPointer = useRef<{ x: number; y: number } | null>(null)

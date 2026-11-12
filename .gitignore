@@ -5,6 +5,8 @@
 !/src/
 !/electron/
 !/scripts/
+!/mcp/
+!/.mcp.json
 !/README.md
 !/LICENSE
 !/package.json
