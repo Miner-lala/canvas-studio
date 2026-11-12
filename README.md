@@ -5,27 +5,39 @@
 <h1 align="center">画布</h1>
 
 <p align="center">
-  在一张无限画布上生成图片：写一段提示词，拉一根线，出图。<br>
-  本地运行 · 用你自己的 API Key · 图片和项目只存在你自己的电脑上
+  在一张无限画布上生成图片：接上任何你想用的生图模型，自己画，或者让 AI 助手替你画。<br>
+  本地运行 · 模型随你接 · 支持 MCP · 数据只存在你自己的电脑上
 </p>
 
-<p align="center"><sub>A local-first, node-based infinite canvas for AI image generation — text-to-image and image-to-image, bring your own API key, packable as a Mac app.</sub></p>
+<p align="center"><sub>A local-first, node-based infinite canvas for AI image generation. Plug in any image model you like — and let AI assistants drive the canvas over MCP.</sub></p>
 
 ---
 
 提示词、参考图、每一版结果，都摆在同一张画布上，用连线标出「这张图是从哪来的」。想换个说法、换张参考图再试一版，直接从上一张接着连。整个创作过程摊开在眼前，不会淹没在一长串对话记录里。
 
+**模型不绑定任何一家**：今天用这个模型，明天换那个，甚至同一张画布上混着用、并排比效果。**还支持 MCP**：把一批想法交给 AI 助手，它会在画布上写好提示词、连好参考图、开始生成，你看着它干活，最后只管挑图。
+
 ## 亮点
 
+- **想用哪个模型就接哪个**：OpenRouter 一个 Key，就能在设置里勾选 60 多个图片模型（GPT Image、Nano Banana、FLUX、Seedream、Qwen Image、Recraft……）；其它任何生图 API，包括你自己部署的模型，照着现成的例子写一个适配文件就能接进来，同步、异步接口都支持。每个模型支持的比例、清晰度、画质等参数会自动出现在生成面板上
+- **支持 MCP，让 AI 助手替你画**：Claude 等支持 MCP 的 AI 助手可以直接操作画布——批量写提示词、连参考图、开始生成、取回结果先自己看一遍、不满意再改。你接进来的每个模型，AI 助手都能直接用
 - **节点式工作流**：文本节点写提示词，图片节点出图；把图片连到下一个图片节点就是图生图，可以一路接着迭代
 - **一次多张，平铺挑图**：一次出 1 / 2 / 4 张或任意张数，叠在同一个节点里左右切换；一键「平铺」排成一排对比，大图预览用方向键翻看
 - **参考图随手放**：拖进画布、⌘V 粘贴截图、点按钮上传都可以；多张参考图自动编号成 图1、图2…，拖动就能调整顺序
-- **参数一次选完**：比例、清晰度、画质、背景、格式、张数按所选模型自动出现，放在同一个弹层里，不用来回点
+- **参数一次选完**：比例、清晰度、画质、背景、格式、张数放在同一个弹层里，不用来回点
 - **像设计软件一样顺手**：撤销 / 重做、复制粘贴节点（可以跨项目）、分组、框选、快捷键，改动自动保存
-- **你的 Key，你的数据**：不用注册账号；API Key、生成的图片、项目文件都只保存在本机，后台服务只在本机监听
-- **模型随你接**：内置 OpenRouter（可用 GPT Image 等图片模型），每个模型支持的参数自动读取；也可以照着下文的说明写一个文件，接入任何图片 API，同步、异步接口都支持
+- **你的 Key，你的数据**：不用注册账号；API Key、生成的图片、项目文件都只保存在本机，后台服务只在本机监听，也会拦下其它网站发来的请求
 - **一条命令打包成 Mac App**：`npm run app:build`，十几秒得到一个双击就能用的 `.app`
-- **让 AI 助手替你画**：内置 MCP 服务，Claude 等 AI 助手可以直接在画布上写提示词、连参考图、开始生成、查看结果，你在画布上看着它干活，最后只管挑图
+
+## 接入你想用的模型
+
+| 方式 | 适合 | 怎么做 |
+|---|---|---|
+| **OpenRouter** | 一个 Key 试遍主流图片模型 | 在「设置」里填 Key、勾选模型，[详细步骤](#用-openrouter-出图) |
+| **OpenAI 兼容接口** | 服务商提供 OpenAI 格式的图片接口 | 不用写代码，在 `.env.local` 填 3 行配置，[配置说明](#openai-兼容接口不用写代码) |
+| **自己写适配** | 任何其它生图 API，包括自己部署的模型 | 在 `src/server/providers/` 加一个文件，[开发说明](#接入其他模型-api) |
+
+接进来的模型会自动出现在生成面板的模型列表里，也能通过 [MCP](#让-ai-助手帮你画mcp) 交给 AI 助手使用。
 
 ## 快速开始
 
@@ -116,6 +128,20 @@ npm run app:build
 Key 只保存在本机数据文件夹的 `settings.json` 里，页面上只显示首尾几位。每个模型支持的比例、清晰度、张数、参考图数量、画质、背景、格式，都从 OpenRouter 的模型清单自动读取，生成面板会按模型显示对应选项。一次只能出 1 张的模型，选多张时会自动并行发多次请求。
 
 ## 接入其他模型 API
+
+### OpenAI 兼容接口（不用写代码）
+
+很多服务商提供和 OpenAI 一样格式的图片接口（`/images/generations`、`/images/edits`）。把 `.env.example` 复制成 `.env.local`，填上：
+
+```bash
+OPENAI_COMPAT_API_KEY=你的 Key
+OPENAI_COMPAT_BASE_URL=https://服务商的地址/v1
+OPENAI_COMPAT_MODELS=模型名1,模型名2
+```
+
+重新运行 `npm run dev`，这些模型就会出现在模型列表里。（`.env.local` 目前只在 `npm run dev` 时读取；打包的 App 请用 OpenRouter，或者用下面的方式写成适配文件再打包。）
+
+### 自己写适配（任何生图 API）
 
 所有模型调用都走 `src/server/providers/`：
 
