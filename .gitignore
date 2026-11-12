@@ -6,6 +6,7 @@
 !/electron/
 !/scripts/
 !/README.md
+!/LICENSE
 !/package.json
 !/package-lock.json
 !/next.config.ts
