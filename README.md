@@ -1,15 +1,43 @@
-# 画布
+<p align="center">
+  <img src="electron/icon.png" width="128" alt="画布">
+</p>
 
-节点式无限画布，用来生成图片：文本节点写提示词，连到图片节点上生成；图片节点之间连线就是图生图。
+<h1 align="center">画布</h1>
 
-## 启动
+<p align="center">
+  在一张无限画布上生成图片：写一段提示词，拉一根线，出图。<br>
+  本地运行 · 用你自己的 API Key · 图片和项目只存在你自己的电脑上
+</p>
+
+<p align="center"><sub>A local-first, node-based infinite canvas for AI image generation — text-to-image and image-to-image, bring your own API key, packable as a Mac app.</sub></p>
+
+---
+
+提示词、参考图、每一版结果，都摆在同一张画布上，用连线标出「这张图是从哪来的」。想换个说法、换张参考图再试一版，直接从上一张接着连。整个创作过程摊开在眼前，不会淹没在一长串对话记录里。
+
+## 亮点
+
+- **节点式工作流**：文本节点写提示词，图片节点出图；把图片连到下一个图片节点就是图生图，可以一路接着迭代
+- **一次多张，平铺挑图**：一次出 1 / 2 / 4 张或任意张数，叠在同一个节点里左右切换；一键「平铺」排成一排对比，大图预览用方向键翻看
+- **参考图随手放**：拖进画布、⌘V 粘贴截图、点按钮上传都可以；多张参考图自动编号成 图1、图2…，拖动就能调整顺序
+- **参数一次选完**：比例、清晰度、画质、背景、格式、张数按所选模型自动出现，放在同一个弹层里，不用来回点
+- **像设计软件一样顺手**：撤销 / 重做、复制粘贴节点（可以跨项目）、分组、框选、快捷键，改动自动保存
+- **你的 Key，你的数据**：不用注册账号；API Key、生成的图片、项目文件都只保存在本机，后台服务只在本机监听
+- **模型随你接**：内置 OpenRouter（可用 GPT Image 等图片模型），每个模型支持的参数自动读取；也可以照着下文的说明写一个文件，接入任何图片 API，同步、异步接口都支持
+- **一条命令打包成 Mac App**：`npm run app:build`，十几秒得到一个双击就能用的 `.app`
+
+## 快速开始
+
+需要 Node.js 20.9 或更高版本。
 
 ```bash
+git clone https://github.com/Miner-lala/canvas-studio.git
+cd canvas-studio
 npm install
 npm run dev
 ```
 
-浏览器打开 http://localhost:3000 。
+浏览器打开 http://localhost:3000 ，点右上角「设置」填入 OpenRouter API Key 就能开始生成。还没有 Key 的话，可以先用内置的 Mock 模型把流程走一遍（在本地画占位图，不调用任何外部服务）。
 
 ## 打包成 Mac App
 
@@ -17,7 +45,7 @@ npm run dev
 npm run app:build
 ```
 
-大约十几秒，产物在 `release/画布-darwin-arm64/画布.app`，双击就能用，也可以拖进「应用程序」文件夹。
+大约十几秒，产物在 `release/画布-darwin-arm64/画布.app`（Intel 芯片的 Mac 是 `darwin-x64`），双击就能用，也可以拖进「应用程序」文件夹。
 
 - App 自带后台服务，不需要先 `npm run dev`；服务只在本机（127.0.0.1）监听，局域网里的其他设备访问不到
 - App 的数据在 `~/Library/Application Support/画布/data`，和开发时用的项目 `data/` 文件夹是**两份独立的数据**。菜单栏「画布 → 在访达中显示数据文件夹」可以直接打开
